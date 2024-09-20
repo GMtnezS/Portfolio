@@ -1,19 +1,24 @@
-// import Intro from '@/components/intro'
+import Intro from '@/components/intro'
 // import NewsletterForm from '@/components/newsletter-form'
-// import RecentPosts from '@/components/recent-posts'
-// import RecentProjects from '@/components/recent-projects'
+import RecentPosts from '@/components/recent-posts'
+import RecentProjects from '@/components/recent-projects'
+
+import { MDXRemote } from 'next-mdx-remote/rsc';
 
 export default function Home() {
+  const content = `
+    # This is a markdown heading
+  `;
+
   return (
     <section className='pb-24 pt-40'>
       <div className='container max-w-3xl'>
-        Portfolio
-        {/* <Intro />
-
+        <Intro />
+        <MDXRemote source={content} />
         <RecentPosts />
         <RecentProjects />
 
-        <NewsletterForm /> */}
+        {/* <NewsletterForm /> */}
       </div>
     </section>
   )

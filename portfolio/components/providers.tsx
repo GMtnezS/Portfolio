@@ -23,7 +23,7 @@ function ToasterProvider() {
   return (
     <Toaster
       position='top-right'
-      theme={resolvedTheme === 'dark' ? 'light' : 'dark'}
+      theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
     />
   )
 }
