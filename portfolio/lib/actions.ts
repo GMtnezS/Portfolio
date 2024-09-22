@@ -5,9 +5,11 @@ import { Resend } from 'resend'
 import { ContactFormSchema, NewsletterFormSchema } from '@/lib/schemas'
 import ContactFormEmail from '@/emails/contact-form-email'
 
+const emailKey = process.env.RESEND_API_KEY;
+
 type ContactFormInputs = z.infer<typeof ContactFormSchema>
 type NewsletterFormInputs = z.infer<typeof NewsletterFormSchema>
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = new Resend(emailKey)
 
 export async function sendEmail(data: ContactFormInputs) {
   // Validate the incoming data using Zod schema
@@ -23,9 +25,9 @@ export async function sendEmail(data: ContactFormInputs) {
 
     // Sending the email using the Resend API
     const { data: responseData, error } = await resend.emails.send({
-      from: 'hello@hamedbahram.io',
+      from: 'gmtnezs@gmtnezschez.com',
       to: [email],
-      cc: ['hello@hamedbahram.io'],
+      cc: ['gmtnezs@gmtnezschez.com'],
       subject: 'Contact form submission',
       text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
       react: ContactFormEmail({ name, email, message }), // Assuming this is a valid React component
@@ -45,27 +47,29 @@ export async function sendEmail(data: ContactFormInputs) {
 }
 
 export async function subscribe(data: NewsletterFormInputs) {
-  const result = NewsletterFormSchema.safeParse(data)
+  const result = NewsletterFormSchema.safeParse(data);
 
   if (result.error) {
-    return { error: result.error.format() }
+    // Format the Zod error into a serializable plain object
+    return { error: result.error.format() };
   }
 
   try {
-    const { email } = result.data
-    const { data, error } = await resend.contacts.create({
-      email: email,
-      audienceId: process.env.RESEND_AUDIENCE_ID as string
-    })
+    const { email } = result.data;
+    const { data: contactData, error: contactError } = await resend.contacts.create({
+      email,
+      audienceId: process.env.RESEND_AUDIENCE_ID as string,
+    });
 
-    if (!data || error) {
-      throw new Error('Failed to subscribe')
+    if (!contactData || contactError) {
+      throw new Error(`Failed to subscribe: ${contactError?.message || 'Unknown error'}`);
     }
 
     // TODO: Send a welcome email
 
-    return { success: true }
+    return { success: true };
   } catch (error) {
-    return { error }
+    // Instead of passing the error object directly, serialize it into a plain object with a message
+    return { error: (error as Error).message || 'An unknown error occurred' };
   }
 }

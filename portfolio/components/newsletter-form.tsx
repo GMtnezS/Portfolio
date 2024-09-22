@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 
 import { subscribe } from '@/lib/actions'
 import { Card, CardContent } from '@/components/ui/card'
+import { ZodFormattedError } from 'zod'; // Import Zod types
 
 type Inputs = z.infer<typeof NewsletterFormSchema>
 
@@ -28,16 +29,23 @@ export default function NewsletterForm() {
   })
 
   const processForm: SubmitHandler<Inputs> = async data => {
-    const result = await subscribe(data)
+    const result = await subscribe(data);
 
     if (result?.error) {
-      toast.error('An error occurred! Please try again.')
-      return
+      if (typeof result.error === 'object' && 'email' in result.error) {
+        // Handle ZodFormattedError: Convert it to a readable string
+        const formattedError = (result.error as ZodFormattedError<{ email: string }, string>).email?._errors.join(', ');
+        toast.error(`Validation error: ${formattedError}`);
+      } else {
+        // Handle other errors as strings
+        toast.error(result.error as string);
+      }
+      return;
     }
 
-    toast.success('Subscribed successfully!')
-    reset()
-  }
+    toast.success('Subscribed successfully!');
+    reset();
+  };
 
   return (
     <section>
