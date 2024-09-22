@@ -1,5 +1,5 @@
 import { getPosts } from '@/lib/posts'
-import PostsWithSearch from '@/components/posts-with-search'
+import PostsWithSearch from '@/components/posts/posts-with-search'
 
 export default async function PostsPage() {
   const posts = await getPosts()

@@ -1,7 +1,7 @@
-import Intro from '@/components/intro'
-import NewsletterForm from '@/components/newsletter-form'
-import RecentPosts from '@/components/recent-posts'
-import RecentProjects from '@/components/recent-projects'
+import Intro from '@/components/home/intro'
+import NewsletterForm from '@/components/home/newsletter-form'
+import RecentPosts from '@/components/posts/recent-posts'
+import RecentProjects from '@/components/projects/recent-projects'
 
 import { MDXRemote } from 'next-mdx-remote/rsc';
 
